@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#13a538" />
+  <title>Relaxdev — Субсидированная ипотека Сбербанк</title>
+  <style>
+    :root {
+      --bg: #f4f6f7;
+      --card: #ffffff;
+      --text: #121416;
+      --muted: #6c747a;
+      --line: #e7eaec;
+      --accent: #13a538;
+      --accent-dark: #0d7f2a;
+      --accent-soft: #eef9f1;
+      --info: #f7fbf8;
+      --shadow: 0 12px 35px rgba(20, 35, 25, 0.08);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); }
+    body {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .shell {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      font-size: 13px;
+      line-height: 1;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 1px solid #dfe4e1;
+      background: #fff;
+      border-radius: 999px;
+      color: #536058;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+
+    .hero {
+      background: linear-gradient(145deg, #0f1d14 0%, #173522 100%);
+      color: #fff;
+      padding: 24px;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      right: -70px;
+      top: -85px;
+      border-radius: 50%;
+      background: rgba(80, 220, 110, .14);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 6vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -.035em;
+      max-width: 520px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,.72);
+      line-height: 1.5;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(28, 40, 32, .07);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 26px rgba(20, 35, 25, .055);
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) minmax(150px, 220px);
+      align-items: center;
+      gap: 12px;
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--line);
+      min-height: 76px;
+    }
+
+    .row:last-child { border-bottom: 0; }
+
+    .num {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: #f0f2f2;
+      color: #596168;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .row.active .num { background: var(--accent-soft); color: var(--accent-dark); }
+
+    .label { min-width: 0; }
+    .label-title {
+      font-size: 15px;
+      line-height: 1.28;
+      font-weight: 750;
+      letter-spacing: -.01em;
+    }
+    .label-note {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .value {
+      text-align: right;
+      font-size: 18px;
+      line-height: 1.25;
+      font-weight: 820;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.02em;
+      word-break: break-word;
+    }
+
+    .input-wrap { position: relative; }
+    .money-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 40px 0 12px;
+      border: 1px solid #d7dcda;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 760;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      transition: border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .money-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(19, 165, 56, .12);
+    }
+
+    .suffix {
+      position: absolute;
+      right: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #69716d;
+      font-size: 15px;
+      font-weight: 750;
+      pointer-events: none;
+    }
+
+    .result-strong .value { color: var(--accent-dark); }
+
+    .info-card {
+      margin-top: 14px;
+      padding: 18px;
+      border: 1px solid #dcebe0;
+      border-radius: var(--radius);
+      background: var(--info);
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .info-card .num { background: #ddf4e3; color: var(--accent-dark); }
+    .info-title { font-size: 15px; font-weight: 800; }
+    .info-note { margin-top: 4px; font-size: 12px; color: var(--muted); }
+    .info-value { text-align: right; font-size: 19px; font-weight: 850; color: var(--accent-dark); font-variant-numeric: tabular-nums; }
+
+    .meta {
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 2px 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .reset {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #5e6762;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 8px 4px;
+    }
+    .reset:hover { color: var(--text); }
+
+    .foot {
+      margin-top: 20px;
+      text-align: center;
+      color: #8b9290;
+      font-size: 11px;
+    }
+
+    @media (max-width: 560px) {
+      .shell { padding: 16px 12px 28px; }
+      .hero { padding: 21px 18px; border-radius: 24px; }
+      .row {
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: 10px;
+        padding: 15px 14px;
+      }
+      .row .input-wrap,
+      .row .value {
+        grid-column: 2;
+        width: 100%;
+        text-align: left;
+      }
+      .row .money-input { text-align: left; padding-left: 12px; }
+      .row .suffix { right: 13px; }
+      .value { font-size: 18px; }
+      .info-card {
+        grid-template-columns: 34px minmax(0, 1fr);
+        padding: 15px 14px;
+      }
+      .info-value { grid-column: 2; text-align: left; }
+      .meta { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand">Relaxdev · demo</div>
+      <div class="status"><span class="dot"></span> Формулы из Excel</div>
+    </div>
+
+    <section class="hero">
+      <h1>Субсидированная ипотека Сбербанк</h1>
+      <p>Сбер · 360 мес. · ставка на весь срок · КВ 15,50%</p>
+    </section>
+
+    <section class="card" aria-label="Калькулятор">
+      <div class="row active">
+        <div class="num">1</div>
+        <div class="label">
+          <div class="label-title">Стоимость квартиры</div>
+          <div class="label-note">Введите стоимость объекта</div>
+        </div>
+        <div class="input-wrap">
+          <input id="price" class="money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Стоимость квартиры" />
+          <span class="suffix">₽</span>
+        </div>
+      </div>
+
+      <div class="row active">
+        <div class="num">2</div>
+        <div class="label">
+          <div class="label-title">Первый взнос клиента</div>
+          <div id="downNote" class="label-note">0% от новой цены</div>
+        </div>
+        <div class="input-wrap">
+          <input id="downPayment" class="money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Первый взнос клиента" />
+          <span class="suffix">₽</span>
+        </div>
+      </div>
+
+      <div class="row result-strong">
+        <div class="num">3</div>
+        <div class="label">
+          <div class="label-title">Новая цена квартиры</div>
+          <div class="label-note">Расчет по формуле Excel, округление до 10 000 ₽</div>
+        </div>
+        <div id="newPrice" class="value" data-excel-formula="=ROUND(((C2-C4)*C9)*VLOOKUP(C7,'Комиссии банков'!B2:E4,4,0)+C2,-4)">—</div>
+      </div>
+
+      <div class="row">
+        <div class="num">4</div>
+        <div class="label">
+          <div class="label-title">Ударожание</div>
+        </div>
+        <div id="markup" class="value" data-excel-formula="=(C11-C12)*C9">—</div>
+      </div>
+
+      <div class="row">
+        <div class="num">5</div>
+        <div class="label">
+          <div class="label-title">Ставка клиента</div>
+          <div class="label-note">Поле только для чтения</div>
+        </div>
+        <div id="rate" class="value">13,0%</div>
+      </div>
+
+      <div class="row">
+        <div class="num">6</div>
+        <div class="label">
+          <div class="label-title">Платеж клиента</div>
+          <div class="label-note">Ежемесячный платеж, 360 месяцев</div>
+        </div>
+        <div id="payment" class="value" data-excel-formula="=-PMT(C7/12,C6,C11-C12,0,0)">—</div>
+      </div>
+    </section>
+
+    <section class="info-card" aria-label="Информационный показатель">
+      <div class="num">7</div>
+      <div>
+        <div class="info-title">Минимапльный ПВ</div>
+        <div class="info-note">Справочно: 20,11% от новой цены квартиры</div>
+      </div>
+      <div id="minDown" class="info-value" data-excel-formula="=C11*0.2011">—</div>
+    </section>
+
+    <div class="meta">
+      <span>Расчет использует данные листов «Расчет» и «Комиссии банков» из исходного файла.</span>
+      <button id="reset" class="reset" type="button">Сбросить</button>
+    </div>
+
+    <div class="foot">Демо-версия для проверки · без репозитория и публикации</div>
+  </main>
+
+  <script>
+    // Данные из листа «Комиссии банков».
+    const bankCommissionTable = [
+      { rate: 0.13,  kv: 0.155, term: 'на весь срок', coefficient: 1.19 },
+      { rate: 0.139, kv: 0.125, term: 'на весь срок', coefficient: 1.16 },
+      { rate: 0.149, kv: 0.097, term: 'на весь срок', coefficient: 1.12 }
+    ];
+
+    // Текущие значения из листа «Расчет».
+    const model = {
+      bank: 'Сбер',
+      clientRate: 0.13,        // C7
+      months: 360,             // C6 = 30*12
+      minimumDownRate: 0.2011  // C5 / C13
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const priceInput = $('price');
+    const downInput = $('downPayment');
+
+    function parseMoney(value) {
+      const cleaned = String(value ?? '').replace(/[^0-9.,-]/g, '').replace(',', '.');
+      if (!cleaned || cleaned === '-' || cleaned === '.') return NaN;
+      return Number(cleaned);
+    }
+
+    function formatMoney(value) {
+      if (!Number.isFinite(value)) return '—';
+      return new Intl.NumberFormat('ru-RU', {
+        maximumFractionDigits: 0,
+        minimumFractionDigits: 0
+      }).format(value) + ' ₽';
+    }
+
+    function formatInput(value) {
+      if (!Number.isFinite(value)) return '';
+      return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 }).format(value);
+    }
+
+    function formatPercent(value, digits = 1) {
+      if (!Number.isFinite(value)) return '—';
+      return new Intl.NumberFormat('ru-RU', {
+        style: 'percent',
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      }).format(value);
+    }
+
+    function excelRoundMinus4(value) {
+      // Эквивалент ROUND(value,-4) для положительных денежных значений.
+      return Math.round((value + Number.EPSILON) / 10000) * 10000;
+    }
+
+    function pmt(rate, nper, pv, fv = 0, type = 0) {
+      if (rate === 0) return -(pv + fv) / nper;
+      const pow = Math.pow(1 + rate, nper);
+      return -(rate * (fv + pv * pow)) / ((1 + rate * type) * (pow - 1));
+    }
+
+    function lookupRate(rate) {
+      return bankCommissionTable.find(row => Math.abs(row.rate - rate) < 1e-10);
+    }
+
+    function calculate() {
+      const apartmentPrice = parseMoney(priceInput.value); // C2
+      const rawDownPayment = parseMoney(downInput.value);  // C12
+
+      if (!Number.isFinite(apartmentPrice) || apartmentPrice === 0) {
+        $('newPrice').textContent = '—';
+        $('markup').textContent = '—';
+        $('payment').textContent = '—';
+        $('minDown').textContent = '—';
+        $('downNote').textContent = '0% от новой цены';
+        return;
+      }
+
+      // В Excel пустой C12 через SUM(C12) фактически участвует в расчете как 0.
+      const firstPayment = Number.isFinite(rawDownPayment) ? rawDownPayment : 0;
+      const excelRow = lookupRate(model.clientRate);
+      if (!excelRow) return;
+
+      // Скрытые/служебные вычисления из исходной книги:
+      const c4 = firstPayment;                             // =SUM(C12)
+      const d4 = c4 / apartmentPrice;                     // =C4/C2
+      const c5 = apartmentPrice * model.minimumDownRate;   // =C2*0.2011
+      const c6 = model.months;                             // =30*12
+      const c8 = excelRow.term;                            // VLOOKUP(C7,...,3,0)
+      const c9 = excelRow.kv;                              // VLOOKUP(C7,...,2,0)
+
+      // №3: =ROUND(((C2-C4)*C9)*VLOOKUP(C7,'Комиссии банков'!B2:E4,4,0)+C2,-4)
+      const c11 = excelRoundMinus4((((apartmentPrice - c4) * c9) * excelRow.coefficient) + apartmentPrice);
+
+      // D12: =C12/C11
+      const d12 = c11 !== 0 ? firstPayment / c11 : NaN;
+
+      // №7: =C11*0.2011
+      const c13 = c11 * model.minimumDownRate;
+
+      // №4: =(C11-C12)*C9
+      const c14 = (c11 - firstPayment) * c9;
+
+      // №6: =-PMT(C7/12,C6,C11-C12,0,0)
+      const c15 = -pmt(model.clientRate / 12, c6, c11 - firstPayment, 0, 0);
+
+      // C17: =C11-C14 (служебная проверка, оставлена в модели)
+      const c17 = c11 - c14;
+
+      $('newPrice').textContent = formatMoney(c11);
+      $('markup').textContent = formatMoney(c14);
+      $('payment').textContent = formatMoney(c15);
+      $('minDown').textContent = formatMoney(c13);
+      $('downNote').textContent = Number.isFinite(d12) ? `${formatPercent(d12, 1)} от новой цены` : '—';
+
+      // Служебные значения доступны для проверки в консоли браузера.
+      window.__excelCheck = {
+        C2: apartmentPrice, C4: c4, D4: d4, C5: c5, C6: c6, C7: model.clientRate,
+        C8: c8, C9: c9, C11: c11, C12: firstPayment, D12: d12,
+        C13: c13, C14: c14, C15: c15, C17: c17
+      };
+    }
+
+    function normalizeOnBlur(input) {
+      const val = parseMoney(input.value);
+      if (Number.isFinite(val)) input.value = formatInput(val);
+    }
+
+    [priceInput, downInput].forEach(input => {
+      input.addEventListener('input', calculate);
+      input.addEventListener('focus', () => {
+        const val = parseMoney(input.value);
+        if (Number.isFinite(val)) input.value = String(Math.round(val));
+      });
+      input.addEventListener('blur', () => {
+        normalizeOnBlur(input);
+        calculate();
+      });
+    });
+
+    $('reset').addEventListener('click', () => {
+      priceInput.value = '';
+      downInput.value = '';
+      priceInput.focus();
+      calculate();
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
